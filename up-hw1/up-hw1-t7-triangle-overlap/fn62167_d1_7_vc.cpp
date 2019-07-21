@@ -11,119 +11,157 @@
 * @compiler VC
 *
 */
+
+/* i solved only the first two objectives of the given problem and they were
+	7.a find if the triangles are equilateral
+	7.b find if the triangles are upright by y,  meaning they have one side perpendicular to y-axis
+		and the other two sides are equal (i don't remember if the definition required all sides to be equal, i.e. 7.a)
+	7.c find the area of the intersecting part of the two triangles (?) and also if they are covering the requirements in 7.a and 7.b
+*/
 #include <iostream>
 #include <cmath>
-using namespace std;
-// distance between two points
-double calculateDistance(double Ax, double Ay, double Bx, double By) {
-	return sqrt(pow((Ax - Bx), 2) + pow((Ay - By), 2));
+#include <string>
+
+using std::cout;
+using std::cin;
+using std::sqrt;
+using std::abs;
+using std::pow;
+using std::string;
+
+//function attempting to more correctly determine if two double numbers are equal
+bool EqualDoubles(double a, double b)
+{
+	const double EPSILON = 0.0001;
+	return abs(a - b) < EPSILON;
 }
-bool triangleInequality(double a, double b, double c) {
-	if (a + b > c && b + c > a && a + c > b) {
-		return true;
+
+struct Point2D
+{
+	double x;
+	double y;
+
+	double DistanceTo(Point2D other)
+	{
+		return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
 	}
-	else {
-		return false;
+};
+
+class Triangle2D
+{
+public:
+	Triangle2D () = default;
+	Trianle2d(const Triangle2D& other) = default;
+	~Triangle2D() = default;
+	Triangle2D& operator=(const Triangle2D& other) = default;
+
+	void InitTriangle(Point2D& A_in, Point2D& B_in, Point2D C_in, string& name_in)
+	{
+		A = A_in;
+		B = B_in;
+		C = C_in;
+
+		CalculateSides();
+		name = name_in;
 	}
+
+	string GetName() const
+	{
+		return name;
+	}
+
+	// check if such triangle is possible to exist
+	bool IsValid()
+	{
+		return (a + b > c) && (a + c > b) && (b + c > a)
+	}
+
+	// check if all the sides are equal
+	bool IsEquilateral()
+	{
+		double eps = 0.00001;
+
+		return EqualDoubles(a, b) && EqualDoubles(b, c)	// i.e. a == b and b == c
+	}
+
+	bool IsUprightByY()
+	{
+		return (EqualDoubles(a, b) && A.y < C.y) 
+					|| (EqualDoubles(a, c) && A.y < B.y) 
+					|| (EqualDoubles(b, c) && B.y < A.y);
+	}
+
+private:
+	void CalculateSides()
+	{
+		c = A.DistanceTo(B);
+		b = A.DistanceTo(C);
+		a = B.DistanceTo(C);
+	}
+
+private:
+	Point2D A;
+	Point2D B;
+	Point2D C;
+
+	double c; // the side AB
+	double b; // the side AC
+	double a; // the side BC
+
+	string name;
+};
+
+void InputTrianle(Triangle2D& triangle, string name)
+{
+	Point2D dummyA;
+	Point2D dummyB;
+	Point2D dummyC;
+
+	cout << "Enter triangle" << name <<  " points : \n"
+
+	cout << "first point (x, y) : ";
+	cin >> dummyA.x >> dummyA.y;
+
+	cout << "second point (x, y) : ";
+	cin >> dummyB.x >> dummyB.y;
+
+	cout << "third point (x, y) : ";
+	cin >> dummyC.x >> dummyC.y;
+
+	triangle.InitTriangle(dummyA, dummyB, dummyC, name);
 }
-bool equilateralTriangle(double a, double b, double c) {
-	//precision
-	double epsilon = 0.00001;
-	if ( abs(a - b) < epsilon && abs(b - c) < epsilon ) {
-		return true;
-	}
-	else {
-		return false;
-	}
+
+void PrintTrianleInfo(Triangle2D& tr)
+{
+	if (!tr.IsValid())
+		cout << "error : " << tr.GetName() << ", such triangle doesn't exist\n";
+
+	cout << "triangle " << tr.GetName() 
+						<< ( tr.IsEquilateral() ? "is" : "is not" ) << "equilateral and " 
+						<< ( tr.IsUprightByY() ? "is" : "is not") << "upright by y-coordinate\n";
+
 }
-bool isUpright(double Ay, double By, double Cy) {
-	if (((Ay == By) && (Cy > Ay)) ||
-		((By == Cy) && (Ay > By)) ||
-		((Ay == Cy) && (By > Ay))) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
+
 int main() {
-	//triangle ABC
-	double Ax, Ay;
-	double Bx, By;
-	double Cx, Cy;
-	//triangle MNP
-	double Mx, My;
-	double Nx, Ny;
-	double Px, Py;
-	//input of the coordinates
-	cout << "Enter point A coordinates (x,y) : ";
-	cin >> Ax >> Ay;
-	cout << "Enter point B coordinates (x,y) : ";
-	cin >> Bx >> By;
-	cout << "Enter point C coordinates (x,y) : ";
-	cin >> Cx >> Cy;
-	cout << "Enter point M coordinates (x,y) : ";
-	cin >> Mx >> My;
-	cout << "Enter point N coordinates (x,y) : ";
-	cin >> Nx >> Ny;
-	cout << "Enter point P coordinates (x,y) : ";
-	cin >> Px >> Py;
-	//calculating the lenght of the sides
-	double AB = calculateDistance(Ax, Ay, Bx, By);
-	double BC = calculateDistance(Bx, By, Cx, Cy);
-	double AC = calculateDistance(Ax, Ay, Cx, Cy);
-	double MN = calculateDistance(Mx, My, Nx, Ny);
-	double NP = calculateDistance(Nx, Ny, Px, Py);
-	double MP = calculateDistance(Mx, My, Px, Py);
-	//check if the triangles exist
-	bool ABC_exist = triangleInequality(AB, BC, AC);
-	bool MNP_exist = triangleInequality(MN, NP, MP);
-	if (ABC_exist == false && MNP_exist == false) {
-		cout << "Both triangles do not exist" << endl;
-		//system("pause");
-		//return 0;
-	}
-	else if (ABC_exist == false && MNP_exist == true) {
-		cout << "Triangle ABC does not exist" << endl;
-		//system("pause");
-		//return 0;
-	}
-	else if (ABC_exist == true && MNP_exist == false) {
-		cout << "Triangle MNP does not exist" << endl;
-		//system("pause");
-		//return 0;
-	}
-	else;
-	//check if the triangles are equilateral
-	bool equilateral_ABC = equilateralTriangle(AB, BC, AC);
-	bool equilateral_MNP = equilateralTriangle(MN, NP, MP);
-	if (equilateral_ABC == false && equilateral_MNP == false) {
-		cout << "Both triangles are not equilateral" << endl;
-	}
-	else if (equilateral_ABC == false && equilateral_MNP == true) {
-		cout << "Triangle ABC is not equlateral, triangle MNP is" << endl;
-	}
-	else if (equilateral_ABC == true && equilateral_MNP == false) {
-		cout << "Triangle ABC is equilateral but MNP is not" << endl;
-	}
-	else {
-		cout << "Both triangles are equilateral" << endl;
-	}
-	//check if the triangles are upright
-	bool upright_ABC = isUpright(Ay, By, Cy);
-	bool upright_MNP = isUpright(My, Ny, Py);
-	if (upright_ABC == false && upright_MNP == false) {
-		cout << "Both triangles are not upright" << endl;
-	}
-	else if (upright_ABC == false && upright_MNP == true) {
-		cout << "Triangle ABC is not upright, triangle MNP is" << endl;
-	}
-	else if (upright_ABC == true && upright_MNP == false) {
-		cout << "Triangle ABC is upright, but MNP is not" << endl;
-	}
-	else {
-		cout << "Both triangles are upright" << endl;
-	}
-	system("pause");
+
+	Triangle2D ABC;
+	Triangle2D MNP;
+
+	InputTrianle(ABC, "ABC");
+	InputTrianle(MNP, "MNP");
+
+	PrintTrianleInfo(ABC);
+	PrintTrianleInfo(MNP);
+
+	// bool ABC_exists = ABC.IsValid();
+	// bool MNP_exists = MNP.IsValid();
+
+	// bool ABC_is_equil = ABC.IsEquilateral();
+	// bool MNP_is_equil = MNP.IsEquilateral();
+
+	// bool ABC_is_upright_by_y = ABC.IsUprightByY();
+	// bool MNP_is_upright_by_y = MNP.IsUprightByY();
+
+
 	return 0;
 }

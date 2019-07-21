@@ -11,44 +11,57 @@
 * @compiler VC
 *
 */
+
 #include <iostream>
-using namespace std;
-void drawTriangle (short height, char symbol)
+
+using std::cout;
+using std::cin;
+
+void drawTriangle(int height, char symbol)
 {
-	//loop for drawing the height of the triangle
-	for (int i = 0; i <= height - 1; i++) 
+	for (int i = 0; i < height; i++)
 	{
-		//loop for the empty spaces 
-		for (int j = 0; j <= height - i - 2; j++) 
+		//loop for the beginning empty spaces 
+		for (int j = 0; j <= height - 2 - i; j++)
 		{
 			cout << " ";
 		}
-		//loop for dispalying the characters
-		for (int s = 0; s <= i; s++) 
+
+		//loop for dispalying the characters and spaces between them
+		for (int s = 0; s <= i; s++)
 		{
 			cout << symbol;
-			if (s != i) {
+			if (s != i)
+			{
 				cout << " ";
 			}
 		}
+
 		cout << "\n";
 	}
 }
+
 int main() {
-	short height;
+
+	const int MIN_HEIGHT = 0;
+	const int MAX_HEIGHT = 22;
+
+	int height;
+	char symbol;
+
 	cout << "Enter height of triangle : ";
 	cin >> height;
-	if (height <= 0) {
-		cout << "Wrong input, triangle cant have negative height" << endl;
+
+	if (height < MIN_HEIGHT || height > MAX_HEIGHT)
+	{
+		cout << "error : wrong input, triangle height must be within [0, 22]\n";
 		return 0;
 	}
-	else if (height > 22) {
-		cout << "Wrong input, triangle too high" << endl;
-		return 0;
-	}
-	char symbol;
-	cout << "Enter a symbol : ";
+
+	cout << "Enter triangle draw symbol : ";
 	cin >> symbol;
-	drawTriangle (height, symbol);
+
+	drawTriangle(height, symbol);
+
 	return 0;
 }

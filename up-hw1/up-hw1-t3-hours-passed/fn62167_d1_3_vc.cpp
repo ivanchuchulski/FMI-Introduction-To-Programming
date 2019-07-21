@@ -11,39 +11,51 @@
 * @compiler VC
 *
 */
+
 #include <iostream>
-using namespace std;
+
+using std::cout;
+using std::cin;
+
 int main() {
+
 	int input;
+
 	cout << "Enter seconds : ";
 	cin >> input;
-	if (input < 0 || input > 86400) {
-		cout << "Wrong input" << endl;
+
+	if (input < 0 || input > 86400) 	//second in a day is 24h * 3600s
+	{
+		cout << "Wrong input\n";
 		return 0;
 	}
+
 	int hoursPassed = (input / 3600);
 	int minutesPassed = ((input / 60) % 60);
-	cout << hoursPassed << endl;
-	cout << minutesPassed << endl;
-	if (hoursPassed <= 9) {
-		if (minutesPassed <= 9) {
-			cout << "The time is 0" << hoursPassed << " : 0" << minutesPassed << endl;
-			return 0;
+
+	if (hoursPassed <= 9) 
+	{
+		if (minutesPassed <= 9) 
+		{
+			cout << "The time is 0" << hoursPassed << " : 0" << minutesPassed << '\n';
 		}
-		else {
-			cout << "The time is 0" << hoursPassed << " : " << minutesPassed << endl;
-			return 0;
-		}
-	}
-	else {
-		if (minutesPassed <= 9) {
-			cout << "The time is " << hoursPassed << " : 0" << minutesPassed << endl;
-			return 0;
-		}
-		else {
-			cout << "The time is " << hoursPassed << " : " << minutesPassed << endl;
-			return 0;
+		else 
+		{
+			cout << "The time is 0" << hoursPassed << " : " << minutesPassed << '\n';
 		}
 	}
+	else 
+	{
+		if (minutesPassed <= 9) 
+		{
+			cout << "The time is " << hoursPassed << " : 0" << minutesPassed << '\n';
+		}
+		else 
+		{
+			cout << "The time is " << hoursPassed << " : " << minutesPassed << '\n';
+		}
+	}
+
+
 	return 0;
 }
