@@ -1,0 +1,4 @@
+write functions that perform the following calculations
+task1 : leap year, inputted as string
+task2 : square structs, perspective
+task3 : find the product of the k-th and second digits of a integer, k is given as function parameter

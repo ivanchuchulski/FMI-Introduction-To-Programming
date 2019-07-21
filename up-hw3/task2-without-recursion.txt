@@ -1,0 +1,30 @@
+void calculatingSteps(int firstVolume, int secondVolume, int kLiters, int source, int dest, int &counter) {
+	int sourceLiters = firstVolume;
+	int destLiters = 0;
+
+	while (true) {
+		int water = calculateMin(sourceLiters, (secondVolume - destLiters));
+
+		//filling
+		destLiters = destLiters + water;
+		sourceLiters = sourceLiters - water;
+		counter++;
+
+		//bottom of recursion
+		if (destLiters == kLiters || sourceLiters == kLiters) {
+			break;
+		}
+
+		if (sourceLiters == 0) {
+			//filling the source if it becomes empty
+			sourceLiters = firstVolume;
+			counter++;
+		}
+
+		if (destLiters == secondVolume) {
+			//emptying the destination if it becomes full
+			destLiters = 0;
+			counter++;
+		}
+	}
+}
