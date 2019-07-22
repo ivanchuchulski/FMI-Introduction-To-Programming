@@ -50,8 +50,8 @@ struct Point2D
 class Triangle2D
 {
 public:
-	Triangle2D () = default;
-	Trianle2d(const Triangle2D& other) = default;
+	Triangle2D() = default;
+	Triangle2D(const Triangle2D& other) = default;
 	~Triangle2D() = default;
 	Triangle2D& operator=(const Triangle2D& other) = default;
 
@@ -73,7 +73,7 @@ public:
 	// check if such triangle is possible to exist
 	bool IsValid()
 	{
-		return (a + b > c) && (a + c > b) && (b + c > a)
+		return (a + b > c) && (a + c > b) && (b + c > a);
 	}
 
 	// check if all the sides are equal
@@ -81,14 +81,14 @@ public:
 	{
 		double eps = 0.00001;
 
-		return EqualDoubles(a, b) && EqualDoubles(b, c)	// i.e. a == b and b == c
+		return EqualDoubles(a, b) && EqualDoubles(b, c);	// i.e. a == b and b == c
 	}
 
 	bool IsUprightByY()
 	{
-		return (EqualDoubles(a, b) && A.y < C.y) 
-					|| (EqualDoubles(a, c) && A.y < B.y) 
-					|| (EqualDoubles(b, c) && B.y < A.y);
+		return (EqualDoubles(a, b) && A.y < C.y)
+			|| (EqualDoubles(a, c) && A.y < B.y)
+			|| (EqualDoubles(b, c) && B.y < A.y);
 	}
 
 private:
@@ -117,9 +117,9 @@ void InputTrianle(Triangle2D& triangle, string name)
 	Point2D dummyB;
 	Point2D dummyC;
 
-	cout << "Enter triangle" << name <<  " points : \n"
+	cout << "Enter triangle" << name << " points : \n";
 
-	cout << "first point (x, y) : ";
+		cout << "first point (x, y) : ";
 	cin >> dummyA.x >> dummyA.y;
 
 	cout << "second point (x, y) : ";
@@ -136,9 +136,9 @@ void PrintTrianleInfo(Triangle2D& tr)
 	if (!tr.IsValid())
 		cout << "error : " << tr.GetName() << ", such triangle doesn't exist\n";
 
-	cout << "triangle " << tr.GetName() 
-						<< ( tr.IsEquilateral() ? "is" : "is not" ) << "equilateral and " 
-						<< ( tr.IsUprightByY() ? "is" : "is not") << "upright by y-coordinate\n";
+	cout << "triangle " << tr.GetName()
+		<< (tr.IsEquilateral() ? "is" : "is not") << "equilateral and "
+		<< (tr.IsUprightByY() ? "is" : "is not") << "upright by y-coordinate\n";
 
 }
 
