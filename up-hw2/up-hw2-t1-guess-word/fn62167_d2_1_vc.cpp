@@ -15,213 +15,217 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-using namespace std;
+
+using std::cout;
+using std::cin;
 
 //30 words with max length 20
-const char WORD_DATABASE[][21] = {
-	"student" ,"refrigerator", "fmi", "university", "bulgaria", 
-	"guitar", "cooper", "distance", "butter", "expect", 
+const char WORD_DATABASE[30][21] = {
+	"student" ,"refrigerator", "fmi", "university", "bulgaria",
+	"guitar", "cooper", "distance", "butter", "expect",
 	"unite", "branch", "educated", "truck", "open",
 	"range", "modern", "history", "attack",	"smoke",
 	"decision", "drag", "carbon", "squeeze", "wing"
-	"shop", "visitor", "seed", "dynamic", "counterdemontrators", "freedom"
-
+	"shop", "visitor", "seed", "dynamic", "counterdemonstrators", "freedom"
 };
 
-enum difficultyLevel {
+enum DifficultyLevel
+{
 	impossible = 1,
 	hard = 3,
 	medium = 5,
 	easy = 7,
 };
 
-//selecting word from database
-/*selectWord(guessWord, WORD_DATABASE[indexRand]); in main
-void selectWord( char *input, const char *global) {
-	int counter = 0;
-	for (int i = 0; global[i] != '\0'; i++) {
-		input[i] = global[i];
-		counter++;
-	}
-	//endign the array
-	input[counter] = '\0';
-}*/
 
-//inputControl
-int safetyInputInteger(int lowerBound, int upperBound) {
-	int numberInput;
+int SafetyInputInteger(int lowerBound, int upperBound)
+{
+	int input;
+	string difficulty_msg = "Select  difficulty [1-4], 1 : easy, 2 : medium, 3 : hard, 4 : impossible  -> ";
 
-	do {
-		cout << "Select level of difficulty [1-4] : ";
-		cin >> numberInput;
+	do
+	{
+		cout << difficulty_msg;
+		cin >> input;
 
-		if (cin.fail()) {
+		if (cin.fail())
+		{
+			cout << "Sorry, wrong input, try again!\n" << difficulty_msg;
 			cin.clear();
 			cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			continue;
 		}
-	} while ((numberInput < lowerBound || numberInput > upperBound));
 
-	return numberInput;
+	} while ((input < lowerBound || input > upperBound));
+
+	return input;
 }
 
 //converting upper to lower function
-char toLower(char letter) {
-	if (letter >= 'A' && letter <= 'Z') {
+char ToLower(char letter)
+{
+	if (letter >= 'A' && letter <= 'Z')
 		return letter + ('a' - 'A');
-	}
+
 	return letter;
 }
 
-//copying function
-char *strCopy(char *dest, const char *source) {
-	do {
-		*dest++ = *source;
-	} while (*source++ != '\0');
+size_t StrLen(const char* src)
+{
+	if (src == nullptr)
+		return 0;
+
+	const char* reader = src;
+
+	while (*reader != '\0')
+		reader++;
+
+	return reader - src;
+}
+
+char* StrCopy(char* dest, const char* src)
+{
+	size_t index = 0;
+
+	do
+	{
+		dest[index] = src[index];
+
+	} while (src[index++] != '\0');
+
 	return dest;
 }
 
-//comparing function
-int strCompare(char *a, char *b) {
-	unsigned char a1;
-	unsigned char b1;
+int StrCompare(const char* str1, const char* str2)
+{
+	char ch1, ch2;
 	int difference;
-	do {
-		a1 = (unsigned char)*a++;
-		b1 = (unsigned char)*b++;
-		difference = a1 - b1;
-	} while ((difference == 0) && (a1 != '\0'));
+
+	do
+	{
+		ch1 = *str1++;
+		ch2 = *str2++;
+
+		difference = ch1 - ch2;
+	} while ((difference == 0) && (ch1 != '\0'));
 
 	return difference;
 }
 
 //filling with '_'
-void fillUnderscore(char *outWord) {
-	char firstLetter = outWord[0];
-	char lastLetter;
-	for (int i = 1; outWord[i] != '\0'; i++) {
-		lastLetter = outWord[i];
-	}
-	//filling with '_'
-	for (int j = 0; outWord[j] != '\0'; j++) {
-		if (outWord[j] == firstLetter || outWord[j] == lastLetter)
-			//do nothing
-			;
-		else {
-			outWord[j] = '_';
-		}
-	}
-}
+void FillWithUnderscore(char* displayed_word, size_t len)
+{
+	char first_letter = displayed_word[0];
+	char last_letter = displayed_word[len - 1];
 
-//update
-void update(char letter, char *outWord, int pos) {
-	//updating
-	for (int j = 0; outWord[j] != '\0'; j++) {
-		if (j == pos) {
-			outWord[j] = letter;
-			break;
-		}
+	//filling with '_'
+	for (size_t j = 1; j < len - 1; j++)
+	{
+		if (displayed_word[j] == first_letter || displayed_word[j] == last_letter)
+			continue;
+		else
+			displayed_word[j] = '_';
 	}
 }
 
 //check if input is in the word
-bool guessSearch(char userInput, char *guessWord, char *outWord) {
+bool UpdateDisplayedWord(char user_input, const char* word_to_guess, char* displayed_word, size_t len)
+{
 	int counter = 0;
-	for (int i = 1; guessWord[i] != '\0'; i++) {
-		if (userInput == guessWord[i]) {
-			update(userInput, outWord, i);
+
+	for (size_t i = 1; i < len - 1; i++)
+	{
+		if (user_input == word_to_guess[i])
+		{
+			displayed_word[i] = user_input;
 			counter++;
 		}
 	}
+
 	//if counter is > 0, a letter was guessed right
-	if (counter == 0)
-		return false;
-	else
-		return true;
+	return (counter > 0) ? true : false;
 }
 
 int main() {
+
 	srand(time(NULL));
-	int indexRand = rand() % 31;	//getting random number from [0,30]
+	int rand_indx = rand() % 31;	//getting random number from [0,30]
 
-	char guessWord[21];
-	char outWord[21];	//word to be displayed
-	char userInput;
+	char* word_to_guess = nullptr;
+	char* displayed_word = nullptr;
+
 	int difficulty;
-	int attemptsLeft;
-
-	//selecting word from database
-	strCopy(guessWord, WORD_DATABASE[indexRand]);
-
-	//4 levels of difficulty
-
+	int attempts;
 
 	//safe inputControl
-	difficulty = safetyInputInteger(1, 4);
-
-	//unsafe
-	//cout << "Select level of difficulty [1-4] : ";
-	//cin >> difficulty;
+	difficulty = SafetyInputInteger(1, 4);
 
 	//determine attempts
 	switch (difficulty)
 	{
 		case 1:
-			attemptsLeft = easy;
+			attempts = DifficultyLevel::easy;
 			break;
 		case 2:
-			attemptsLeft = medium;
+			attempts = DifficultyLevel::medium;
 			break;
 		case 3:
-			attemptsLeft = hard;
+			attempts = DifficultyLevel::hard;
 			break;
 		case 4:
-			attemptsLeft = impossible;
+			attempts = DifficultyLevel::impossible;
 			break;
-	default:
-		attemptsLeft = easy;
-		break;
+		default:
+			attempts = DifficultyLevel::easy;	// or set it to the hardest, idk
+			break;
 	}
 
-	//copying the random word and filling with _
-	strCopy(outWord, guessWord);
-	fillUnderscore(outWord);
+	size_t word_len = StrLen(WORD_DATABASE[rand_indx]);
+	word_to_guess = new char[word_len + 1];
+	displayed_word = new char[word_len + 1];
+
+	memset(word_to_guess, '\0', word_len + 1);
+	memset(displayed_word, '\0', word_len + 1);
+
+	StrCopy(displayed_word, WORD_DATABASE[rand_indx]);
+	StrCopy(word_to_guess, displayed_word);
+	FillWithUnderscore(displayed_word, word_len);
 
 	//gameOn
-	while (attemptsLeft > 0) {
+	while (attempts > 0)
+	{
+		char user_input;
 
-		cout << "Word : " << outWord << ";\t" << "Attempts : " << attemptsLeft << '\n';
+		cout << "Word to guess is : " << displayed_word << " \t " << "Attempts left : " << attempts << '\n';
+
 		cout << "Enter a letter : ";
-		cin >> userInput;
+		cin >> user_input;
 
-		//handling upperCase
-		userInput = toLower(userInput);
+		user_input = ToLower(user_input);
 
-		//see if the letter was in the word
-		bool found = guessSearch(userInput, guessWord, outWord);
+		bool found = UpdateDisplayedWord(user_input, word_to_guess, displayed_word, word_len);
 
-		if (found == false) {
-			//letter is not in the word
-			cout << "Error\n";
-			attemptsLeft = attemptsLeft - 1;
+		if (!found)
+		{
+			cout << "Error, the letter is not in the word!\n";
+			attempts -= 1;
 		}
-		else {
-			//check if you guessed all the letters
-			if (strCompare(guessWord, outWord) == 0) {
-				cout << "Success, the word is : \"" << outWord << "\"";
+		else
+		{
+			// check if you guessed all the letters
+			if (StrCompare(word_to_guess, displayed_word) == 0)
+			{
+				cout << "Success, the word is : " << displayed_word << '\n';
 				break;
 			}
 		}
 	}
-	
-	if (attemptsLeft == 0) {
+
+	if (attempts == 0)
+	{
 		//gameOver
-		cout << "Sorry, you lose\n";
-//		system("pause");
-		return 0;
+		cout << "Sorry, you lose, the word was : " << word_to_guess << '\n';
 	}
 
-	cout << '\n';
-//	system("pause");
 	return 0;
 }

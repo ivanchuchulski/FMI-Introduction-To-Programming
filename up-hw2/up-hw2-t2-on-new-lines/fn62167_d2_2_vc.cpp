@@ -14,25 +14,30 @@
 
 #include <iostream>
 #include <iomanip>
+
 using namespace std;
 
 //array of signs, that need to be removed
 const char SPECIAL_SIGNS[] = { '.', '!', '?', ',', '\"', '\0'};
 
 //removing signs
-void rmveSigns (char *input, char *destination) {
+void RemoveSigns(const char* input, char* destination) 
+{
 	int k = 0;
 	int counter = 0;
 	//scaning the sentence for special signs
-	for (int i = 0; input[i] != '\0'; i++) {
-		//scanning the specialArray
-		for (int j = 0; SPECIAL_SIGNS[j] != '\0'; j++) {
-			if (input[i] == SPECIAL_SIGNS[j]) {
+	for (int i = 0; input[i] != '\0'; i++) 
+	{
+		for (int j = 0; SPECIAL_SIGNS[j] != '\0'; j++) 
+		{
+			if (input[i] == SPECIAL_SIGNS[j]) 
+			{
 				counter++;
 			}
 		}
-		//check if there wasnt a special sign, write in destination arr
-		if (counter == 0) {
+		//check if there wasn't a special sign, write in destination arr
+		if (counter == 0) 
+		{
 			destination[k] = input[i];
 			k++;
 		}
@@ -107,16 +112,16 @@ void middleFrame(char *sentence, int maxWord) {
 }
 
 int main() {
+
 	char sentence[101];
 	char modSentence[101];	//modified sentence, without special signs
 
-	//input
 	cout << "Enter a sentence : ";
 	cin.getline(sentence, 101);
 	cout << '\n';
 
 	//remove exclamation, question marks, commmas etc
-	rmveSigns(sentence, modSentence);
+	RemoveSigns(sentence, modSentence);
 
 	//onNewLines
 	onNewLines(modSentence);
