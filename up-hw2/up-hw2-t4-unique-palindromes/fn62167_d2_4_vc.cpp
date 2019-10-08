@@ -12,15 +12,41 @@
 *
 */
 
+// program to find the unique substrings palindrome in a given string
+
 #include <iostream>
+
 using std::cout;
 using std::cin;
 using std::endl;
 
-const int max_len = 11;
+const int MAX_LEN = 11;
 
-int strCompare(const char* str1, const char* str2) {
-	
+int StrLen(char* input) 
+{
+	char *reader = input;
+
+	while (*reader != '\0')
+		reader++;
+
+	return (reader - input);
+}
+
+char* StrCopy(char* dest, const char* src) 
+{
+	size_t index = 0;
+
+	do 
+	{
+		dest[index] = src[index];
+
+	} while (src[index++] != '\0');
+
+	return dest;
+}
+
+int StrCompare(const char* str1, const char* str2) 
+{	
 	char c1, c2;
 	int diff;
 
@@ -35,31 +61,8 @@ int strCompare(const char* str1, const char* str2) {
 	return diff;
 }
 
-/*	string length	*/
-int strLength(char *input) {
-
-	char *pLink = input;
-
-	while (*pLink != '\0') {
-		pLink++;
-	}
-	//returning the length
-	return (pLink - input);
-
-}
-
-/*	copying function	*/
-char *strCopy(char *dest, const char *source) {
-	do {
-		*dest++ = *source;
-	} while (*source++ != '\0');
-	return dest;
-}
-
-/*Palindrome check*/
-bool isPali(char *input) {
-	int length = strLength(input);
-
+bool IsPalindrome(char *input, const size_t length) 
+{
 	for (int i = 0; i < (length / 2); i++) {
 		if (input[i] != input[length - i - 1]) {
 			//cout << input[i] << "!=" << input[length - i - 1] << endl;
@@ -67,43 +70,38 @@ bool isPali(char *input) {
 			return false;
 		}
 	}
-	//the word is palindrome
+
 	return true;
 }
 
-/*Find substrings*/
-void findSubstr(char *input, char arr[][max_len], int& ref_copies) {
+void FindSubstrings(const char* input, const size_t length, char palindromes[][MAX_LEN], int& ref_copies) 
+{
+	char* word = new char[length + 1];		// creating dynamic array for substring
+	std::memset(word, '\0', length + 1);	// setting all the bytes to zero
+	int indx_word = 0;
+	int indx_pali = 0;
 
-	int length = strLength(input);
-	char* word = new char[length + 1];		//creating dynamic array for each substring
-	int k = 0;
-	int q = 0;
+	// searching the string; i is the pivot(starting point)
+	for (int i = 0; i < length - 1; i++) 
+	{
+		word[indx_word++] = input[i];
 
-	/*searching the string; i is the pivot(starting point) */
-	for (int i = 0; i < (length - 1); i++) {
-		word[k] = input[i];
-		k++;
-		for (int j = (i + 1); j < length; j++) {
-			word[k] = input[j];
-			k++;
-			word[k] = '\0';	//adding the terminating null
+		for (int j = i + 1; j < length; j++) 
+		{
+			word[indx_word++] = input[j];
+			word[indx_word] = '\0';
 
-			/*palindrome check*/
-			if (isPali(word) == true) {
+			if (IsPalindrome(word, length)) 
+			{
+				// printing for debugging the pali
+				// for (int m = 0; word[m] != '\0'; m++)  cout << word[m];
+				// cout << endl;
 
-				/*printing the pali*/
-				/*for (int q = 0; word[q] != '\0'; q++) {
-					cout << word[q];
-				}
-				cout << endl;*/
-
-				/*copying to paliArr*/
-				strCopy(arr[q], word);
-				q++;
+				StrCopy(palindromes[indx_pali++], word);
 			}
 		}
-		/*set k to zero for next 'i' iteration*/
-		k = 0;
+
+		indx_word = 0;
 	}
 
 	//freeing up heap memory
@@ -117,70 +115,52 @@ int main() {
 
 	char input[51];
 
-	/*	getting user input	*/
-	cout << "Input[max 50 symbols] : ";
+	cout << "Input (max 50 symbols) : ";
 	cin.getline(input, 51);
-
 	
-	int senLen = strLength(input);
-	//max_len word, (max_len - 1) length of a word + 1 for '\0'	11, 10
-	char paliArr[max_len][max_len];
+	int length_input = StrLen(input);
+
+	//MAX_LEN word, (MAX_LEN - 1) length of a word + 1 for '\0'	11, 10
+	char palindromes[MAX_LEN][MAX_LEN];
 	int copyiesOccured = 0;
 	int counter = 0;
 
-	/*		setting paliArr		*/
-	//for (int i = 0; i < max_len; i++) {
-	//	for (int j = 0; j < max_len; j++) {
-	//		//ending with terminating zero
-	//		//if (j == (max_len - 1)) {
-	//		if (j == (senLen + 1)) {
-	//			paliArr[i][j] = '\0';
-	//			break;
-	//		}
-	//		//otherwise fill with
-	//		paliArr[i][j] = '*';
-	//	}
-	//}
+	for (int i = 0; i < ::MAX_LEN; i++)
+		memset(palindromes[i], 0, MAX_LEN);
+	
+	// finding all substrings
+	FindSubstrings(input, length_input, palindromes, copyiesOccured);
 
-	for (int i = 0; i < ::max_len; ++i) {
-		memset(paliArr[i], 0, max_len);
-	}
-
-
-	/*logic -> finding all substrings*/
-	findSubstr(input, paliArr, copyiesOccured);
-
-	/*printing palindroms*/
-	cout << "Palindroms :\n";
-	for (int i = 0; i < copyiesOccured; i++) {
-
-		
+	// printing palindromes
+	cout << "Palindromes :\n";
+	for (int i = 0; i < copyiesOccured; i++) 
+	{
 		/*loop to check for unique palindrome :
-			logic -> if there is the same word in tha paliArr, the current one is skipped	
+			logic -> if there is the same word in tha palindromes, the current one is skipped	
 				*/
-		for (int k = i + 1; k < copyiesOccured; k++) {
-			if (strCompare(paliArr[i], paliArr[k]) == 0) {
+		for (int k = i + 1; k < copyiesOccured; k++) 
+		{
+			if (StrCompare(palindromes[i], palindromes[k]) == 0) 
+			{
 				counter++;
 			}
 		}		
 
 		/**/
-		if(counter == 0) {
-			cout << "paliArr[" << i << "]=";
-			for (int j = 0; paliArr[i][j] != '\0'; j++) {
-				cout << paliArr[i][j];
+		if (counter == 0) 
+		{
+			cout << "palindromes[" << i << "]=";
+			for (int j = 0; palindromes[i][j] != '\0'; j++) 
+			{
+				cout << palindromes[i][j];
 			}
 			cout << '\n';
 		}
 
 		/*nullifying the counter for next i iteration*/
 		counter = 0;
-
 	}
 
 
-
-	std::cout << "\nPress ENTER to proceed : ";
-	std::cin.get();
 	return 0;
 }
