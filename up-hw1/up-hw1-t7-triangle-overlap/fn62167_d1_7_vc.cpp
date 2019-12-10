@@ -131,14 +131,17 @@ void InputTrianle(Triangle2D& triangle, string name)
 	triangle.InitTriangle(dummyA, dummyB, dummyC, name);
 }
 
-void PrintTrianleInfo(Triangle2D& tr)
+void PrintTriangleInfo(Triangle2D& triangle)
 {
-	if (!tr.IsValid())
-		cout << "error : " << tr.GetName() << ", such triangle doesn't exist\n";
+	if (!triangle.IsValid()) 
+	{
+		cout << "error : " << triangle.GetName() << ", such triangle doesn't exist\n";
+		return;
+	}
 
-	cout << "triangle " << tr.GetName()
-		<< (tr.IsEquilateral() ? "is" : "is not") << "equilateral and "
-		<< (tr.IsUprightByY() ? "is" : "is not") << "upright by y-coordinate\n";
+	cout << "triangle " << triangle.GetName()
+		<< (triangle.IsEquilateral() ? "is" : "is not") << "equilateral and "
+		<< (triangle.IsUprightByY() ? "is" : "is not") << "upright by y-coordinate\n";
 
 }
 
@@ -150,8 +153,8 @@ int main() {
 	InputTrianle(ABC, "ABC");
 	InputTrianle(MNP, "MNP");
 
-	PrintTrianleInfo(ABC);
-	PrintTrianleInfo(MNP);
+	PrintTriangleInfo(ABC);
+	PrintTriangleInfo(MNP);
 
 	// bool ABC_exists = ABC.IsValid();
 	// bool MNP_exists = MNP.IsValid();
